@@ -2,7 +2,6 @@ const PORT = 3000;
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const res = require("express/lib/response");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,7 +32,7 @@ app.post("/", (req, res) => {
     });
 
     const unfollowing = results2.filter((e) => !results1.includes(e));
-    res.json(unfollowing);
+    console.log(unfollowing);
   });
 });
 
