@@ -1,59 +1,58 @@
-const username = document.getElementById("name").value;
+const usernameInput = document.getElementById("name");
 const button = document.getElementById("button");
 const showResults = document.querySelector(".results");
-const followingUrl = `https://api.github.com/users/${username}/following?page=1&per_page=1000`;
-const followersUrl = `https://api.github.com/users/${username}/followers?page=1&per_page=1000`;
+const notifications = document.querySelector(".notifications");
+let username = "";
+
+usernameInput.addEventListener("input", (e) => {
+  username = e.target.value;
+  return username;
+});
+console.log(username);
 button.addEventListener("click", (e) => {
   e.preventDefault();
-  Promise.all([
-    fetch(followersUrl).then((res) => res.json()),
-    fetch(followingUrl).then((res) => res.json()),
-  ]).then((responses) => {
-    const resone = responses[0];
-    const restwo = responses[1];
-    const results1 = [];
-    const results2 = [];
-    resone.map((result) => {
-      const avatar = result.avatar_url;
-      const login = result.login;
-      const id = result.id;
-      results1.push({ id, avatar, login });
-    });
-    restwo.map((result) => {
-      const avatar = result.avatar_url;
-      const login = result.login;
-      const id = result.id;
-      results2.push({ id, avatar, login });
-    });
+  const followingUrl = `https://api.github.com/users/${username}/following?page=1&per_page=1000`;
+  const followersUrl = `https://api.github.com/users/${username}/followers?page=1&per_page=1000`;
+  if (username !== "") {
+    Promise.all([
+      fetch(followersUrl).then((res) => res.json()),
+      fetch(followingUrl).then((res) => res.json()),
+    ])
+      .then((responses) => {
+        const followersResponse = responses[0];
+        const followingResponse = responses[1];
+        const followersResults = [];
+        const followingResults = [];
+        followersResponse.map((result) => {
+          const avatar = result.avatar_url;
+          const login = result.login;
+          const id = result.id;
+          followersResults.push({ id, avatar, login });
+        });
+        followingResponse.map((result) => {
+          const avatar = result.avatar_url;
+          const login = result.login;
+          const id = result.id;
+          followingResults.push({ id, avatar, login });
+        });
 
-    const unfollowing = results2
-      .map((result) => {
-        return result.id;
+        const unfollowing = followingResults.filter(
+          ({ id: id2 }) => !followersResults.some(({ id: id1 }) => id2 === id1)
+        );
+
+        unfollowing.forEach((unfollow) => {
+          const { avatar, login } = unfollow;
+          const list = document.createElement("li");
+          const template = `
+      <img src=${avatar} alt=${login} />
+      <h1>${login}</h1>
+      `;
+          list.innerHTML = template;
+          return showResults.append(list);
+        });
       })
-      .filter(
-        (e) =>
-          !results1
-            .map((result) => {
-              return result.id;
-            })
-            .includes(e)
-      );
-    console.log(unfollowing);
-
-    // console.log(unfollowing);
-    // const unfollowing = results2.filter((e) =>
-    //   console.log(!results1.includes(e.id))
-    // );
-
-    // unfollowing.forEach((unfollow) => {
-    //   const { avatar, login } = unfollow;
-    //   const list = document.createElement("li");
-    //   const template = `
-    //   '<img src=${avatar} alt=${login} />'
-    //   ${login}
-    //   `;
-    //   list.append(template);
-    //   return showResults.appendChild(list);
-    // });
-  });
+      .catch((err) => console.log(err.message));
+  } else if (username === "") {
+    notifications.innerHTML = "Please add your github name!";
+  }
 });
