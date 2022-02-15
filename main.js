@@ -8,7 +8,15 @@ usernameInput.addEventListener("input", (e) => {
   username = e.target.value;
   return username;
 });
-console.log(username);
+
+function manageErrors(res) {
+  if (!res.ok) {
+    console.log(res.statusText);
+    throw Error(res.statusText);
+  }
+  return res;
+}
+
 button.addEventListener("click", (e) => {
   e.preventDefault();
   const followingUrl = `https://api.github.com/users/${username}/following?page=1&per_page=1000`;
@@ -51,8 +59,13 @@ button.addEventListener("click", (e) => {
           return showResults.append(list);
         });
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err.message);
+      });
   } else if (username === "") {
     notifications.innerHTML = "Please add your github name!";
+    setTimeout(() => {
+      notifications.innerHTML = "";
+    }, 4000);
   }
 });
