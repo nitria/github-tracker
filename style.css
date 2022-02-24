@@ -53,7 +53,7 @@ h1 {
 
 .tab-titles {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   margin: 0;
 }
 
@@ -61,6 +61,7 @@ h1 {
   text-transform: uppercase;
   font-family: Arial, Helvetica, sans-serif;
   padding: 0.5rem 0.5rem 1rem;
+  margin: 0 1rem;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   cursor: pointer;
