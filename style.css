@@ -74,6 +74,7 @@ h1 {
   display: block;
   padding: 1rem;
   background-color: rgb(194, 194, 194);
+  min-height: 50vh;
 }
 
 .tab {
