@@ -1,7 +1,12 @@
 const usernameInput = document.getElementById("name");
 const button = document.getElementById("button");
-const showResults = document.querySelector(".results");
+const unfollowersContent = document.getElementById("unfollowers");
+const unfollowingContent = document.getElementById("unfollowing");
+const followersContent = document.getElementById("followers");
+const followingContent = document.getElementById("following");
 const notifications = document.querySelector(".notifications");
+const tabTitle = document.querySelectorAll(".tab-title");
+const tab = document.querySelectorAll(".tab");
 let username = "";
 
 usernameInput.addEventListener("input", (e) => {
@@ -36,18 +41,55 @@ button.addEventListener("click", (e) => {
           const login = result.login;
           const id = result.id;
           followersResults.push({ id, avatar, login });
+          const list = document.createElement("li");
+          const template = `
+      <img src=${avatar} alt=${login} />
+      <h1>${login}</h1>
+      `;
+          if (tabTitle[0].classList.contains("followers")) {
+            tabTitle[0].innerHTML = `followers (${followersResults.length})`;
+          }
+          list.innerHTML = template;
+          return followersContent.append(list);
         });
         followingResponse.map((result) => {
           const avatar = result.avatar_url;
           const login = result.login;
           const id = result.id;
           followingResults.push({ id, avatar, login });
+          const list = document.createElement("li");
+          const template = `
+      <img src=${avatar} alt=${login} />
+      <h1>${login}</h1>
+      `;
+          if (tabTitle[1].classList.contains("following")) {
+            tabTitle[1].innerHTML = `following (${followingResults.length})`;
+          }
+          list.innerHTML = template;
+          return followingContent.append(list);
         });
 
-        const unfollowing = followingResults.filter(
+        const unfollowers = followingResults.filter(
           ({ id: id2 }) => !followersResults.some(({ id: id1 }) => id2 === id1)
         );
 
+        unfollowers.forEach((unfollow) => {
+          const { avatar, login } = unfollow;
+          const list = document.createElement("li");
+          const template = `
+      <img src=${avatar} alt=${login} />
+      <h1>${login}</h1>
+      `;
+          if (tabTitle[2].classList.contains("unfollowers")) {
+            tabTitle[2].innerHTML = `unfollowers (${unfollowers.length})`;
+          }
+          list.innerHTML = template;
+          return unfollowersContent.append(list);
+        });
+
+        const unfollowing = followersResults.filter(
+          ({ id: id2 }) => !followingResults.some(({ id: id1 }) => id2 === id1)
+        );
         unfollowing.forEach((unfollow) => {
           const { avatar, login } = unfollow;
           const list = document.createElement("li");
@@ -55,8 +97,11 @@ button.addEventListener("click", (e) => {
       <img src=${avatar} alt=${login} />
       <h1>${login}</h1>
       `;
+          if (tabTitle[3].classList.contains("unfollowing")) {
+            tabTitle[3].innerHTML = `unfollowing (${unfollowing.length})`;
+          }
           list.innerHTML = template;
-          return showResults.append(list);
+          return unfollowingContent.append(list);
         });
       })
       .catch((err) => {
@@ -69,3 +114,18 @@ button.addEventListener("click", (e) => {
     }, 4000);
   }
 });
+
+// HANDLE TABS//
+function handleTabs(e) {
+  tabTitle.forEach((item) => {
+    item.classList.remove("active");
+  });
+  e.currentTarget.classList.add("active");
+  const dataList = e.target.dataset;
+  tab.forEach((item) => {
+    item.classList.remove("active");
+    if (item.id === dataList.list) {
+      item.classList.add("active");
+    }
+  });
+}

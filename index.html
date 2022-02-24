@@ -14,7 +14,41 @@
       <button type="button" id="button">Submit</button>
       <p class="notifications"></p>
     </form>
-    <div class="results"></div>
+    <ul class="tab-titles">
+      <li
+        onclick="handleTabs(event)"
+        class="tab-title followers active"
+        data-list="followers"
+      >
+        followers
+      </li>
+      <li
+        onclick="handleTabs(event)"
+        class="tab-title following"
+        data-list="following"
+      >
+        following
+      </li>
+      <li
+        onclick="handleTabs(event)"
+        class="tab-title unfollowers"
+        data-list="unfollowers"
+      >
+        unfollowers
+      </li>
+      <li
+        onclick="handleTabs(event)"
+        class="tab-title unfollowing"
+        data-list="unfollowing"
+      >
+        unfollowing
+      </li>
+    </ul>
+
+    <div class="tab active" id="followers"></div>
+    <div class="tab" id="following"></div>
+    <div class="tab" id="unfollowers"></div>
+    <div class="tab" id="unfollowing"></div>
     <script src="main.js"></script>
   </body>
 </html>
